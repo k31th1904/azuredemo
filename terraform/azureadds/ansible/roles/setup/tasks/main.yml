@@ -1,0 +1,34 @@
+---
+# tasks file for powershell modules for Azure
+
+
+- block:
+
+  - name: Copy powershell into workdir
+    win_copy:
+      src: roles/setup/files/powershellsetup.ps1
+      dest: '{{ workdir }}\powershellsetup.ps1'
+
+  - name: Execute powershell
+    win_shell: '{{ workdir }}\powershellsetup.ps1'
+    register: reg_result
+    become: true
+  
+  - name: Download Azure powershell to VM
+    win_get_url:
+      url: '{{ azurepsurl }}'
+      dest: '{{ workdir }}\azurepowershell.msi'
+
+  - name: Install Azure powershell
+    win_package:
+      path: '{{ workdir }}\azurepowershell.msi'
+      arguments: '/qn'
+    #state: present
+    become: true
+
+  - name: Download ADConnect to VM
+    win_get_url:
+      url: '{{ adconnecturl }}'
+      dest: '{{ workdir }}\adconnect.msi'
+  # unattended installation for ADConnect is not supported
+...

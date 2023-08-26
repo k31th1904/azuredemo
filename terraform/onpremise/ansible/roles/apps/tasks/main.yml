@@ -1,0 +1,37 @@
+---
+# tasks file for basic app install
+
+- name: Create temp directory
+  win_file:
+    path: "{{ workdir }}"
+    state: directory
+
+- block:
+
+  - name: Download zip to VM
+    win_get_url:
+      url: "{{ zipurl }}"
+      dest: '{{ workdir }}\7z.msi'
+
+  - name: Install zip
+    win_package:
+      path: '{{ workdir }}\7z.msi'
+      arguments: '/qn'
+    #state: present
+    become: true
+
+  - name: Download NET Framework to VM
+    win_get_url:
+      url: "{{ ndpurl }}"
+      dest: '{{ workdir }}\ndp.exe'  
+
+  - name: Install NET Framework
+    win_package:
+      path: '{{ workdir }}\ndp.exe'
+      arguments: '/q /norestart'
+      state: present
+    become: true  
+    
+  - name: node_restart
+    win_reboot:
+...

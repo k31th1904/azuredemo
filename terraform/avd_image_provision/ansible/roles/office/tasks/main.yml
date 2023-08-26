@@ -1,0 +1,83 @@
+---
+# tasks file for office
+- block:
+
+  - name: Download Office Deployment Tool to VM
+    win_get_url:
+      url: "{{ officeDeployURL }}"
+      dest: '{{ workdir }}\office.exe'
+
+  - name: Initiate Office Deployment Tool
+    win_package:
+      path: '{{ workdir }}\office.exe'
+      arguments: '/extract:{{ workdir }} /quiet /norestart'
+      state: present
+    become: true
+
+  - name: Copy office config files into workdir
+    win_copy:
+      src: roles/office/files/configuration.xml
+      dest: '{{ workdir }}\configuration.xml'
+
+  - name: Download Office
+    win_package:
+      chdir: '{{ workdir }}'
+      path: '{{ workdir }}\setup.exe'
+      arguments:
+        - '/download'
+        - '{{ workdir }}\configuration.xml'
+      state: present
+    become: true
+
+  - name: Install Office
+    win_package:
+      chdir: '{{ workdir }}'
+      path: '{{ workdir }}\setup.exe'
+      arguments:
+        - '/configure'
+        - '{{ workdir }}\configuration.xml'
+      state: present
+    become: true
+
+  - name: Copy reg config into workdir
+    win_copy:
+      src: roles/office/files/officesetup.ps1
+      dest: '{{ workdir }}\officesetup.ps1'
+
+  - name: Execute reg config
+    win_shell: '{{ workdir }}\officesetup.ps1'
+    register: reg_result
+    become: true
+
+  - name: Download OneDrive to VM
+    win_get_url:
+      url: "{{ onedriveDeployURL }}"
+      dest: '{{ workdir }}\onedrive.exe'
+
+  - name: Install OneDrive
+    win_package:
+      chdir: '{{ workdir }}'
+      path: '{{ workdir }}\onedrive.exe'
+      arguments:
+        - '/silent'
+        - '/allusers'
+      state: present
+    become: true
+
+  always:
+  - name: verification
+    win_shell: 'dir "C:\temp" '
+    args:
+      executable: cmd
+    register: result
+    become: true
+
+  - name: debug
+    debug:
+      msg: 
+      - "{{ result.stdout_lines }}"
+      - "{{ reg_result.stdout_lines }}"
+      - "{{ ansible_distribution }}"
+
+  when: ansible_distribution == 'Microsoft Windows 10 Enterprise for Virtual Desktops'
+    # Detect OS version (avd image doesn't come with Office app) without pre-installed Office app here

@@ -1,0 +1,39 @@
+---
+# tasks file for OS configuration
+
+- block:
+
+  - name: Disable Automatic OS Update
+    win_shell: '{{ disableAutoUpdate }}'
+  
+  - name: Time Zone Redirection
+    win_shell: '{{ enableTimeZoneRedirection }}'
+
+  - name: Create Storage Sense Policy
+    win_shell: '{{ policyStorageSense }}'
+
+  - name: Disable Storage Sense
+    win_shell: '{{ disableStorageSense }}'
+
+  - name: Stop necessary Services
+    win_service:
+      name: "{{ item }}"
+      state: stopped
+    loop: "{{ servicelist }}"
+
+  always:
+  - name: service verification
+    win_shell: 'Get-Service'
+    register: svc_result
+
+  - name: service debug
+    debug:
+      msg: 
+      - "{{ svc_result.stdout_lines }}"
+      - "{{ ansible_facts['distribution'] }}"
+  
+  become: true
+  notify: node_restart
+
+
+      

@@ -1,0 +1,5 @@
+---
+# vars file for office
+workdir: C:\temp
+officeDeployURL: https://download.microsoft.com/download/2/7/A/27AF1BE6-DD20-4CB4-B154-EBAB8A7D4A7E/officedeploymenttool_16626-20148.exe
+onedriveDeployURL: https://go.microsoft.com/fwlink/?linkid=844652

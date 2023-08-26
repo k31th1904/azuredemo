@@ -1,0 +1,16 @@
+---
+- name: This is a playbook for setup onpremise (simulation)
+  hosts: windows
+  gather_facts: true
+  
+  pre_tasks:
+    - debug:
+        msg: "Pre activity from here"
+  
+  roles: 
+    - apps
+    - setup
+
+  post_tasks:
+    - debug:
+        msg: "Post activity from here"

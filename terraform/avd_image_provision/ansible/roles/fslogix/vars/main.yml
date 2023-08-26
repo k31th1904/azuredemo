@@ -1,0 +1,7 @@
+---
+# vars file for fslogix
+
+workdir: C:\temp
+fslogixurl: https://aka.ms/fslogix_download
+
+

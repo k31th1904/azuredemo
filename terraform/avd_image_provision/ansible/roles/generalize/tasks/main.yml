@@ -1,0 +1,10 @@
+---
+# tasks file for generalize
+
+- name: Generalization for image creation
+  win_shell: ' {{ sysprepdir }}\sysprep.exe /generalize /shutdown /oobe '
+  args:
+    executable: cmd
+  poll: 0
+  # fire and forget without waiting since sysprep removes every configuration
+  become: true

@@ -1,0 +1,26 @@
+---
+# vars file for osconfig
+
+disableAutoUpdate: New-ItemProperty -Path "HKLM:\SOFTWARE\Policies\Microsoft\Windows\WindowsUpdate\AU" -Name NoAutoUpdate -PropertyType DWORD -Value 1 -Force
+
+enableTimeZoneRedirection: New-ItemProperty -Path "HKLM:\SOFTWARE\Policies\Microsoft\Windows NT\Terminal Services" -Name fEnableTimeZoneRedirection -PropertyType DWORD -Value 1 -Force
+
+policyStorageSense: New-Item -Path "HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\StorageSense\Parameters\StoragePolicy" -Force
+
+disableStorageSense: New-ItemProperty -Path "HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\StorageSense\Parameters\StoragePolicy" -Name 01 -PropertyType DWORD -Value 0 -Force
+
+servicelist:
+  #- BITS
+  - DPS
+  - SSDPSRV
+  - Themes
+  - bthserv
+  - PhoneSvc
+  - TapiSrv
+  - WbioSrvc
+  - XblAuthManager
+  - XblGameSave
+  - XboxGipSvc
+  - XboxNetApiSvc
+
+

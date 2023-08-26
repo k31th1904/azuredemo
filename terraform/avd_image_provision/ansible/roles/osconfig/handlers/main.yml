@@ -1,0 +1,6 @@
+---
+# handlers file for OS config
+- name: node_restart
+  win_reboot:
+
+    

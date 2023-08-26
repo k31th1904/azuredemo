@@ -1,0 +1,9 @@
+---
+# vars file for fslogix
+
+workdir: C:\temp
+zipurl: https://www.7-zip.org/a/7z2301-x64.msi
+ndpurl: https://go.microsoft.com/fwlink/?linkid=863265
+azurepsurl: https://github.com/Azure/azure-powershell/releases/download/v10.2.0-August2023/Az-Cmdlets-10.2.0.37547-x64.msi
+checkversion : 23.01
+

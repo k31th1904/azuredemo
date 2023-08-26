@@ -1,0 +1,56 @@
+---
+# tasks file for fslogix (Some version of Win avd image - FSLogix is preinstalled, this task is skippable)
+
+- name: Create temp directory
+  win_file:
+    path: "{{ workdir }}"
+    state: directory
+
+- block:
+
+  - name: Download fslogix to VM
+    win_get_url:
+      url: "{{ fslogixurl }}"
+      dest: '{{ workdir }}\fslogix.zip'
+
+  - name: Unzip fslogix package
+    win_unzip:
+      src: '{{ workdir }}\fslogix.zip'
+      dest: '{{ workdir }}\fslogix'
+      #delete_archive: yes
+
+  - name: Install fslogix
+    win_package:
+      path: '{{ workdir }}\fslogix\x64\Release\FSLogixAppsSetup.exe'
+      arguments: '/install /quiet /norestart'
+      state: present
+    become: true
+  
+  when: ansible_distribution != 'Microsoft Windows 10 Enterprise for Virtual Desktops'
+  # Detect OS version (Non AVD image) without pre-installed FSLogix here
+
+- name: Copy reg fslogix config into workdir
+  win_copy:
+    src: roles/fslogix/files/fslogixsetup.ps1
+    dest: '{{ workdir }}\fslogixsetup.ps1'
+
+- name: Execute reg config
+  win_shell: '{{ workdir }}\fslogixsetup.ps1'
+  register: reg_result
+  become: true
+
+- name: fslogix verification
+  win_shell: 'cd "\Program Files\FSLogix\Apps" && frx version'
+  args:
+    executable: cmd
+  register: fslogix_result
+  become: true
+
+- name: fslogix debug
+  debug:
+    msg: 
+    - "{{ fslogix_result.stdout_lines }}"
+    - "{{ reg_result.stdout_lines}}"
+
+
+      
